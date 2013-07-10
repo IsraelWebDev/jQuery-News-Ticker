@@ -228,7 +228,7 @@
 										}		
 									}			
 									// quick check here to see if we actually have any content - log error if not
-									if (countSize(settings.newsArr < 1)) {
+									if (countSize(settings.newsArr) < 1) {
 										debugError('Couldn\'t find any content from the XML feed for the ticker to use!');
 										return false;
 									}
@@ -308,8 +308,23 @@
 						$(settings.dom.revealElem).show(0, function () {
 							$(settings.dom.contentID).css(opts.direction, offset + 'px').show();
 							// set our animation direction
-							animationAction = opts.direction == 'right' ? { marginRight: distance + 'px'} : { marginLeft: distance + 'px' };
-							$(settings.dom.revealID).css('margin-' + opts.direction, '0px').delay(20).animate(animationAction, time, 'linear', postReveal);
+							contentWindowSize = $(settings.dom.tickerID).width() - $(settings.dom.titleID).width() -20;
+							if($(settings.dom.contentID).width() <= contentWindowSize) {
+								animationAction = opts.direction == 'right' ? { marginRight: distance + 'px'} : { marginLeft: distance + 'px' };
+								$(settings.dom.revealID).css('margin-' + opts.direction, '0px').delay(20).animate(animationAction, time, 'linear', postReveal);
+							
+							} else {
+								delay_scroll = contentWindowSize / opts.speed;
+								time_scroll = ($(settings.dom.contentID).width() / opts.speed) - delay_scroll;
+
+								animationAction = opts.direction == 'right' ? { marginRight: (contentWindowSize-7) + 'px'} : { marginLeft: (contentWindowSize-7) + 'px' };
+								$(settings.dom.revealID).css('margin-' + opts.direction, '0px').delay(20).animate(animationAction, delay_scroll, 'linear');
+							
+								//don't forget to add position: relative;z-index: 10; to your .ticker-title class 
+								scrollSize = $(settings.dom.titleID).width() + 20 - $(settings.dom.contentID).width() + contentWindowSize;
+								animationAction_scroll = opts.direction == 'right' ? { right: scrollSize + 'px'} : { left: scrollSize + 'px' };
+								$(settings.dom.contentID).delay(delay_scroll).animate(animationAction_scroll, time_scroll, 'linear',postReveal);
+							}
 						});		
 					}
 				}

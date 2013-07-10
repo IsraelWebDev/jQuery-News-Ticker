@@ -25,6 +25,8 @@
 	font-weight: bold;
 	background-color: #f8f0db;
 	text-transform: uppercase;
+	position: relative;
+	z-index: 10;
 }
 .ticker-content {
 	margin: 0px;
